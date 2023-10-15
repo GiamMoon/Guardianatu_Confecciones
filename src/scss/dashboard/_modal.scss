@@ -1,0 +1,88 @@
+@use 'base/variables' as v;
+@use 'base/mixins' as m;
+
+.modal{
+    position: absolute;
+    background-color: rgba(0, 0, 0, 0.8);
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    color: v.$negro;
+
+    .formulario{
+        max-width: 60rem;
+        background-color: v.$blanco;
+        padding: 2rem;
+        margin: 0 auto;
+        transform: translateY(-50vh);
+        transition-property: all;
+        transition-duration: 500ms;
+        transition-timing-function: ease-in-out;
+        opacity: 0;
+        border-radius: 1rem;
+
+        legend{
+            font-size: 2rem;
+            text-align: center;
+            font-weight: v.$bold;
+            margin-bottom: 2rem;
+            display: block;
+        }
+
+        label{
+            font-weight: v.$bold;
+        }
+
+        input{
+            background-color: v.$grisClaro;
+        }
+
+        input[type="text"]{
+            border: 1px solird v.$gris;
+            border-radius: .5rem;
+        }
+
+        .opciones{
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .submit-nueva-tarea{
+            @include m.boton(v.$verde, v.$blanco);
+            margin: 0;
+        }
+        .cerrar-modal{
+            @include m.boton(v.$rojo, v.$blanco);
+            margin: 0;
+        }
+    
+        &.animar{
+            position: relative;
+            top: 50%;
+            transform: translateY(-50%);
+            opacity: 1;
+        }
+
+        &.cerrar{
+            transform: translateY(-50vh);
+            opacity: 0;
+        }
+    }
+
+  
+}
+
+.tarea{
+    margin-top: 5rem;
+
+    p{
+        color: v.$negro;
+    }
+
+    span{
+        color: v.$azul;
+        font-weight: v.$bold;
+    }
+
+}

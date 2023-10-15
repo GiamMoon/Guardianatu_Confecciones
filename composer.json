@@ -1,0 +1,22 @@
+{
+    "name": "giamp/guardianatu_confecciones",
+    "description": "Proyecto Guardianatu",
+    "type": "project",
+    "autoload": {
+        "psr-4": {
+            "MVC\\" : "./",
+            "Controllers\\" : "./controllers",
+            "Model\\" : "./models"
+        }
+    },
+    "authors": [
+        {
+            "name": "Giampier",
+            "email": "giampierdelacruz37@gmail.com"
+        }
+    ],
+    "require": {
+        "intervention/image": "^2.7",
+        "vlucas/phpdotenv": "^5.5"
+    }
+}

@@ -1,0 +1,71 @@
+@use 'base/variables' as v;
+@use 'base/mixins' as m;
+
+.formulario_vendedor{
+    display: grid;
+    grid-template-columns: repeat(2,1fr);
+}
+.campo_form{
+    margin-top: 5rem;
+    display: flex;
+    margin-bottom: 2rem;
+    align-items: center;
+    justify-content: center;
+    label{
+        flex: 0 0 10rem;
+        color: v.$negro;
+        font-size: 2rem;
+    }
+
+    input,
+    textarea{
+        flex: 0.7;
+        border: none;
+        padding: calc(v.$separacion / 4);
+        border-radius: 1rem;
+        box-shadow: 10px 2px 2px v.$negro;
+    }
+
+}
+
+.boton{
+    box-shadow: 5px 5px 5px v.$negro;
+    margin: 5rem  auto 0;
+    padding: 3rem;
+
+}
+
+.contenedor-botones{
+
+    display: flex;
+    justify-content: space-between;
+    gap: 15rem;
+}
+
+.boton_supervisor{
+    display: inline-block;
+    width: 100%;
+    background-color: red;
+    box-shadow: 5px 5px 5px v.$negro;
+    margin: 5rem 5rem 2rem 5rem;
+    padding: 2rem;
+    color: v.$blanco;
+    text-align: center;
+    font-size: 1.5rem;
+    border: none;
+
+}
+
+.boton_supervisor-verde{
+    display: inline-block;
+    width: 100%;
+    background-color: green;
+    box-shadow: 5px 5px 5px v.$negro;
+    margin: 5rem 5rem 2rem 5rem;
+    padding: 2rem;
+    color: v.$blanco;
+    text-align: center;
+    font-size: 1.5rem;
+    border: none;
+
+}

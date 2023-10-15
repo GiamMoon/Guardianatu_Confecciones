@@ -1,0 +1,45 @@
+@use 'base/variables' as v;
+@use 'base/mixins' as m;
+
+.dashboard{
+    background-color: v.$grisClaro;
+
+    @include m.tablet{
+        display: flex;
+        height: 100vh;
+    }
+    .principal{
+        flex: 1;
+        overflow: scroll;
+    }
+
+    .contenido{
+        padding: 3rem;
+        .nombre-pagina{
+            font-size: 2.8rem;
+            color: v.$negro;
+        }
+    }
+}
+
+.imagenes-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    justify-content: center;
+    gap: 1rem; /* Espacio entre las imágenes */
+    justify-items: center;
+    align-items: center;
+}
+
+.container-img-1 {
+    width: 80%; /* Ancho deseado de cada imagen */
+    height: auto;
+    overflow: hidden;
+}
+
+.container-img img {
+    display: inline-block;
+    width: 100%;
+    margin: 0 auto;
+    object-fit: cover;
+}

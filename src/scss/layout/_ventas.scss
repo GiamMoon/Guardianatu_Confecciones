@@ -1,0 +1,77 @@
+@use 'base/variables' as v;
+
+.busqueda{
+    h2{
+        color: v.$negro;
+    }
+
+    .formulario{
+        .campo{
+            label{
+                color: v.$negro;
+                font-size: 2rem;
+                font-weight: v.$bold;
+            }
+        }
+    }
+
+
+}
+
+.nh{
+    color:v.$negro;
+}
+
+.ventas{
+
+    list-style: none;
+    padding: 0;
+    li{
+        padding: 1rem;
+        border-top: 1px solid v.$negro;
+        h3{
+            color: v.$negro;
+        }
+
+        p{
+            color: v.$negro;
+            font-weight: v.$bold;
+            color: v.$azul;
+        }
+
+        span,
+        .servicio{
+            font-weight: v.$regular;
+            color: v.$negro;
+        }
+
+        .container-img{
+            display: flex;
+            img{
+                display: inline-block;
+                width: 30%;
+                margin: 0 auto;
+            }
+        }
+
+
+        .aprobado {
+            color: green;
+            font-weight: v.$bold;
+        }
+        
+        .rechazado {
+            color: red;
+            font-weight: v.$bold;
+        }
+        
+        .en-espera {
+            color: black;
+            font-weight: v.$bold; 
+        }
+        
+        
+
+        
+    }
+}
