@@ -29,6 +29,9 @@
             <input type="date" name="fecha" id="fecha" required style="width: 100%; padding: 8px; box-sizing: border-box;">
         </div>
 
+        <input type="hidden" name="admin_id" value="<?= $_SESSION['id'] ?? '' ?>">
+
+
         <button type="submit" style="background-color: #4CAF50; color: white; padding: 10px 15px; border: none; border-radius: 5px; cursor: pointer;">Guardar Gasto</button>
 
     </form>

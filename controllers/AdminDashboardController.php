@@ -77,9 +77,11 @@ class AdminDashboardController{
                 // Recibe los parámetros del formulario
                 $mes = $_GET["mes"] ?? date("m");
                 $ano = $_GET["ano"] ?? date("Y");
-        
+
+                $admin_id = $_SESSION['id'];
+
                 // Filtrar los datos según el mes y año
-                $ingresosEgresos = Presupuesto::filtrarPorMesAno($mes, $ano);
+                $ingresosEgresos = Presupuesto::filtrarPorMesAno($mes, $ano, $admin_id);
         
         
                 // Calcula el total de ingresos y egresos por semana
@@ -106,7 +108,8 @@ class AdminDashboardController{
             $cantidad = $_POST['cantidad'];
             $concepto = $_POST['concepto'];
             $fecha = $_POST['fecha'];
-            // Validación de datos (puedes agregar más validaciones según tus necesidades)
+            $admin_id = $_POST['admin_id'] ?? null;
+
            
             // Crear instancia de Presupuesto
             $gasto = new Presupuesto([
@@ -114,6 +117,7 @@ class AdminDashboardController{
                 'cantidad' => $cantidad,
                 'concepto' => $concepto,
                 'fecha' => $fecha,
+                'admin_id' => $admin_id, 
             ]);
             
             // Guardar el gasto en la base de datos

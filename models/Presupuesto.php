@@ -6,13 +6,14 @@ class Presupuesto extends ActiveRecord{
     protected static $tabla = "presupuesto";
 
 
-    protected static $columnasDB = ["id", "tipo", "cantidad","concepto","fecha"];
+    protected static $columnasDB = ["id", "tipo", "cantidad","concepto","fecha", "admin_id"];
 
     public $id;
     public $tipo;
     public $cantidad;
     public $concepto;
     public $fecha;
+    public $admin_id;
 
     public function __construct($args =[]){
         $this->id = $args["id"] ?? null;
@@ -20,14 +21,16 @@ class Presupuesto extends ActiveRecord{
         $this->cantidad = $args["cantidad"] ?? "";
         $this->concepto = $args["concepto"] ?? "";
         $this->fecha = $args["fecha"] ?? date('Y-m-d H:i:s');
+        $this->admin_id = $args["admin_id"] ?? "";
     }
     // En el método filtrarPorMesAno de la clase Presupuesto
-public static function filtrarPorMesAno($mes, $ano) {
-    $query = "SELECT * FROM " . static::$tabla . " WHERE DATE_FORMAT(fecha, '%m') = ? AND DATE_FORMAT(fecha, '%Y') = ?";
-    $params = [$mes, $ano];
-
-    return self::consultarSQLPre($query, $params);
-}
+    public static function filtrarPorMesAno($mes, $ano, $admin_id) {
+        $query = "SELECT * FROM " . static::$tabla . " WHERE DATE_FORMAT(fecha, '%m') = ? AND DATE_FORMAT(fecha, '%Y') = ? AND admin_id = ?";
+        $params = [$mes, $ano, $admin_id];
+    
+        return self::consultarSQLPre($query, $params);
+    }
+    
 
     
     public static function calcularTotalPorSemana($ingresosEgresos) {
