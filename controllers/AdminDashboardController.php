@@ -81,7 +81,7 @@ class AdminDashboardController{
                 $admin_id = $_SESSION['id'];
 
                 // Filtrar los datos según el mes y año
-                $ingresosEgresos = Presupuesto::filtrarPorMesAno($mes, $ano, $admin_id);
+                $ingresosEgresos = Presupuesto::filtrarPorMesAno($mes, $ano);
         
         
                 // Calcula el total de ingresos y egresos por semana

@@ -162,5 +162,14 @@ class Clientes extends ActiveRecord{
         return $resultado;
     }
 
-
+    public static function filtrarPorMesYAno($mes, $ano) {
+        $query = "SELECT * FROM " . static::$tabla . " WHERE MONTH(fecha_creacion) = ? AND YEAR(fecha_creacion) = ?";
+        $params = [$mes, $ano];
+        
+        // Aquí asumimos que tienes algún método similar a consultarSQL en tu clase ActiveRecord
+        $resultados = self::consultarSQLPre($query, $params);
+        
+        return $resultados;
+    }
+    
 }

@@ -190,6 +190,8 @@ class ActiveRecord {
         return $resultado;
     }
 
+
+
     // Busca un registro por su id
     public static function find($id) {
         $query = "SELECT * FROM " . static::$tabla  ." WHERE id = {$id}";
@@ -272,14 +274,17 @@ public static function whereImagen($columna, $valor) {
                   WHERE clientes.{$columna} >= '{$fechaInicio}' 
                         AND clientes.{$columna} < '{$fechaFin}' 
                         AND tareas.fecha_creacion BETWEEN '{$fechaInicio}' AND '{$fechaFin}'
-                  GROUP BY clientes.id";
-        
+                  GROUP BY clientes.id
+                  ORDER BY clientes.fechaEnvio ASC";  // <-- Añadido ORDER BY
+    
         $resultado = self::consultarSQL($query);
-        
+    
         return $resultado;
     }
+    
 
-    public static function consultaSupervisor($estado, $fecha) {
+    public static function consultaSupervisor($estado, $fecha)
+    {
         $fechaInicio = "{$fecha} 00:00:00";
         $fechaFin = "{$fecha} 23:59:59";
     
@@ -287,9 +292,8 @@ public static function whereImagen($columna, $valor) {
                   FROM clientes
                   LEFT JOIN usuarios ON clientes.usuario_id = usuarios.id
                   WHERE confirmado = '{$estado}' 
-                  AND clientes.fecha_creacion BETWEEN '{$fechaInicio}' AND '{$fechaFin}'";
-
-                 
+                  AND clientes.fecha_creacion BETWEEN '{$fechaInicio}' AND '{$fechaFin}'
+                  ORDER BY clientes.fechaEnvio ASC";  // <-- Añadido ORDER BY
     
         $resultado = self::consultarSQL($query);
     
@@ -398,8 +402,9 @@ public static function whereImagen($columna, $valor) {
                   AND clientes.fecha_creacion BETWEEN '{$fechaInicio}' AND '{$fechaFin}' 
                   AND clientes.aprobar_envio = 0 
                   AND clientes.confirmado = 1 
-                  AND clientes.confirmar_envio = 0";
-        
+                  AND clientes.confirmar_envio = 0
+                  ORDER BY clientes.fechaEnvio ASC";  // <-- Añadido ORDER BY
+    
         $resultado = self::consultarSQL($query);
         
         // Iterar sobre los resultados y asignar las propiedades
@@ -410,6 +415,7 @@ public static function whereImagen($columna, $valor) {
     
         return $resultado;
     }
+    
     
     
 

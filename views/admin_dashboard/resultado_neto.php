@@ -86,7 +86,14 @@
 // Suponiendo que ya has incluido tus clases y establecido la conexión a la base de datos
 
 // Obtener todos los clientes
-$clientes = Model\Clientes::todos();
+$mes = isset($_GET['mes']) ? $_GET['mes'] : null;
+$ano = isset($_GET['ano']) ? $_GET['ano'] : null;
+
+if ($mes && $ano) {
+    $clientes = Model\Clientes::filtrarPorMesYAno($mes, $ano);
+} else {
+    $clientes = Model\Clientes::todos();
+}
 
 if ($clientes) :
 ?>
