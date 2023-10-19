@@ -30,7 +30,7 @@ include_once __DIR__ . "/../templates/alertas.php";
     </div>
     <div class="campo">
         <label for="rol">Tu rol</label>
-        <input type="number" id="rol" placeholder="Tu Rol" name="rol" min="1" max="6" value="<?php echo s($usuario->rol); ?>">
+        <input type="number" id="rol" placeholder="Tu Rol" name="rol" min="1" max="7" value="<?php echo s($usuario->rol); ?>">
     </div>
     <input type="submit" class="boton" value="Crear Cuenta">
 </form>

@@ -4,7 +4,7 @@
 .dashboard{
     background-color: v.$grisClaro;
 
-    @include m.tablet{
+    @include m.desktop{
         display: flex;
         height: 100vh;
     }

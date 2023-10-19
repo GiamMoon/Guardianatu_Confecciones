@@ -1,27 +1,51 @@
 <?php
 include_once __DIR__ . "/header-dashboard.php";
-
 ?>
 
 <style>
-    .ventas {
+    
+.ventas {
         /* ... (estilos existentes) */
         list-style: none;
         padding: 0;
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: space-between; /* Distribuir los elementos en el espacio disponible */
-
+        display: flex; /* Añadido: Mostrar elementos en línea */
+        flex-wrap: wrap; /* Añadido: Permitir el ajuste de elementos en varias líneas */
     }
 
-    li {
-        width: calc(50% - 20px); /* Ancho del elemento (ajustar según sea necesario) */
+    .cliente-item {
+        /* Añadido: Estilo específico para cada elemento cliente */
+        border: 1px solid #ddd;
+        padding: 10px;
         margin: 10px;
+        width: calc(50% - 20px); /* Ajuste para que cada elemento ocupe el 50% del contenedor con un margen de 20px */
         box-sizing: border-box;
-        border: 1px solid black;
+        position: relative; /* Añadido: Posición relativa para el contenedor */
     }
 
-    /* Otros estilos existentes ... */
+    .contenedor-botones {
+        
+        margin: 0 auto;/* Añadido: Apilar los botones verticalmente */
+    }
+
+    .boton_supervisor,
+    .boton_supervisor-verde {
+        /* Añadido: Estilos para los botones */
+        padding: 8px 16px;
+        font-size: 14px;
+        cursor: pointer;
+        border: none;
+        border-radius: 4px;
+    }
+
+    .boton_supervisor {
+        background-color: red;
+        color: white;
+    }
+
+    .boton_supervisor-verde {
+        background-color: green;
+        color: white;
+    }
 </style>
 
 <div class="busqueda">
@@ -36,17 +60,13 @@ include_once __DIR__ . "/header-dashboard.php";
 </div>
 
 <?php
-
 if (count($superviciones) === 0) {
     echo "<h2 class='nh' >No hay ventas en esta fecha</h2>";
 }
-
 ?>
 
 <div class="ventas_vendedor">
-
     <ul class="ventas">
-
         <?php
         $idSupervicion = 0;
         foreach ($superviciones as $supervicion) {
@@ -71,9 +91,10 @@ if (count($superviciones) === 0) {
                         $estadoTexto = 'Estado desconocido';
                         $estadoClase = 'estado-desconocido';
                 }
-                ?>
 
-        <li>
+                echo "<li class='cliente-item'>";
+        ?>
+        
             <p>Fecha de Creacion: <span><?php echo $supervicion->fecha_creacion; ?></span></p>
             <p>Nombre Vendedor: <span><?php echo isset($supervicion->nombre_usuario) ? $supervicion->nombre_usuario : '' ?> <?php echo isset($supervicion->apellido_usuario) ? $supervicion->apellido_usuario : ''; ?></span></p>
             <p>N° Boleta: <span><?php echo $supervicion->boleta; ?></span></p>
@@ -86,70 +107,37 @@ if (count($superviciones) === 0) {
             <p>Direccion: <span><?php echo $supervicion->direccion; ?></span></p>
             <p>Fecha de envio: <span><?php echo $supervicion->fechaEnvio; ?></span></p>
             <p>Mensaje: <span><?php echo $supervicion->mensaje; ?></span></p>
-            <p>Estado: <span class="<?= $estadoClase ?>"><?php echo $estadoTexto; ?></span></p>
-            <?php
-                    // Aquí evaluamos el estado de las tareas y asignamos el color correspondiente
-                    $color = ($supervicion->mensaje_tareas === 'Completado') ? 'green' : 'orange';
-                    ?>
-                    <p>Estado de Cortes: <span style="font-weight: bold; color: <?php echo $color; ?>"><?php echo $supervicion->mensaje_tareas; ?></span></p>
-                    <?php $colorCostura = ($supervicion->mensaje_costura === 'Completado') ? 'green' : 'orange';
-                    ?>
-                    <p>Estado de Costura: <span style="font-weight: bold; color: <?php echo $colorCostura; ?>"><?php echo $supervicion->mensaje_costura; ?></span></p>
-                    <?php
-        // Aprobar Envio: Color rojo si es 2, verde si es 1
-        $aprobarEnvio = $supervicion->aprobar_envio;
-
-        switch ($aprobarEnvio) {
-            case 0:
-                $textoEstado = 'En espera';
-                $colorEstado = 'black';
-                break;
-            case 1:
-                $textoEstado = 'Completado';
-                $colorEstado = 'green';
-                break;
-            case 2:
-                $textoEstado = 'Rechazado';
-                $colorEstado = 'red';
-                break;
-            default:
-                $textoEstado = 'Desconocido';
-                $colorEstado = 'gray';
-                break;
-        }
-        ?>
-        
-        <p>Aprobar Envio: <span style="font-weight: bold; text-transform: uppercase; color: <?php echo $colorEstado; ?>">
-            <?php echo $textoEstado; ?>
-        </span></p>
-                    <h3>Imágenes:</h3>
-                    <div class="imagenes-container">
-                        <?php foreach ($supervicion->imagenes as $imagen) : ?>
-                            <div class="container-img-1">
-                                <img src="imagenes/<?php echo $imagen->imagen_path; ?>" alt="">
-                            </div>
-                        <?php endforeach; ?>
+             
+           
+            <h3>Imágenes:</h3>
+            <div class="imagenes-container">
+                <?php foreach ($supervicion->imagenes as $imagen) : ?>
+                    <div class="container-img-1">
+                        <img src="imagenes/<?php echo $imagen->imagen_path; ?>" alt="">
                     </div>
-                </li>
+                <?php endforeach; ?>
+            </div>
 
-            <?php
+            <form class="contenedor-botones" method="POST" action="/aprobar_ventas">
+                    <input type="hidden" name="id" value="<?php echo $supervicion->id; ?>">
+                    <input type="submit" class="boton_supervisor" value="Rechazar" name="rechazar_venta">
+                </form>
+
+                <form class="contenedor-botones" method="POST" action="/aprobar_ventas">
+                    <input type="hidden" name="id" value="<?php echo $supervicion->id; ?>">
+                    <input type="submit" class="boton_supervisor-verde" value="Aprobar" name="aprobar_venta">
+                </form>
+
+        <?php
+        echo "</li>"; 
                  $idVenta = $supervicion->id;
-                }//Fin if ?> 
-
-                
-        </li>
-
-
-
-
-
-         <?php } //Fin foreach?> 
+            } // Fin if
+            ?>
+        <?php } // Fin foreach ?>
     </ul>
 </div>
 
-
 <?php include_once __DIR__ . "/footer-dashboard.php"; 
 
-    $script = "<script src='build/js/buscador.js'></script>";
-    
+$script = "<script src='build/js/buscador.js'></script>";
 ?>

@@ -42,7 +42,7 @@ include_once __DIR__ . "/../templates/alertas.php";
     </div>
     <div class="campo_form">
         <label for="fechaEnvio">Fecha de Envio</label>
-        <input type="datetime-local"  id="fechaEnvio" placeholder="Fecha de Envio" name="fechaEnvio" value="<?php echo s($cliente->fechaEnvio); ?>" >
+        <input type="datetime-local"  id="fechaEnvio" placeholder="Fecha de Envio" name="fechaEnvio" value="" >
     </div>
     <div class="campo_form">
         <label for="precioTotal">Precio Total</label>

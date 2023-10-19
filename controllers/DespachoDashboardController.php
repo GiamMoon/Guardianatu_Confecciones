@@ -28,6 +28,7 @@ class DespachoDashboardController{
         // Obtener clientes según la fecha de creación
         $clientes = Clientes::whereAllFechasTareas("fecha_creacion", $fecha);
 
+
         foreach ($clientes as $supervicion) {
             $clienteID = $supervicion->id;
 
@@ -81,11 +82,18 @@ class DespachoDashboardController{
     }
 
     public static function confirmarEnvio(Router $router) {
-        // Obtener el ID del cliente y la fecha y hora desde la solicitud POST
+        isAuth();
+        if ($_SESSION['rol'] !== '6') {
+            // Si no tiene el rol necesario, redirigir o mostrar un mensaje de error
+            header("Location: /sin_permisos");
+            exit;
+        }
+        // Obtener el ID del cliente, la fecha y hora, y el mensaje del vendedor desde la solicitud POST
         $clienteID = $_POST['cliente_id'] ?? null;
         $fechaHora = $_POST['fecha_hora'] ?? null;
+        $mensajeVendedor = $_POST['mensaje_vendedor'] ?? null;
     
-        if ($clienteID && $fechaHora) {
+        if ($clienteID && $fechaHora && $mensajeVendedor) {
             // Obtener el ID del usuario de la sesión actual
             $usuarioID = $_SESSION['id'] ?? null;
     
@@ -94,8 +102,8 @@ class DespachoDashboardController{
                 exit;
             }
     
-            // Actualizar el estado, la fecha/hora y el ID del despacho en la base de datos
-            Clientes::actualizarEstadoEnvio(1, $clienteID, $fechaHora, $usuarioID);
+            // Actualizar el estado, la fecha/hora y el mensaje del vendedor en la base de datos
+            Clientes::actualizarEstadoEnvio(1, $clienteID, $fechaHora, $usuarioID, $mensajeVendedor);
     
             // Puedes enviar una respuesta JSON si es necesario
             echo json_encode(['success' => true]);
@@ -105,7 +113,14 @@ class DespachoDashboardController{
     }
     
     
+    
     public function obtenerEstadoTarea($clienteID, $nombreTarea) {
+        isAuth();
+        if ($_SESSION['rol'] !== '6') {
+            // Si no tiene el rol necesario, redirigir o mostrar un mensaje de error
+            header("Location: /sin_permisos");
+            exit;
+        }
         $tarea = Tareas::where('nombre',  $nombreTarea);
 
         // Verificar si se encontró la tarea

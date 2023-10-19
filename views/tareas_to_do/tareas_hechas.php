@@ -25,6 +25,8 @@ foreach ($tareas as $tarea) {
     }
 }
 
+// Dividir clientes en grupos de 3
+$clientesDivididos = array_chunk($tareasAgrupadas, 3, true);
 ?>
 
 <div class="busqueda">
@@ -37,34 +39,41 @@ foreach ($tareas as $tarea) {
     </form>
 </div>
 
-<?php foreach ($tareasAgrupadas as $clienteId => $infoCliente) : ?>
-    <div class="cliente">
-        <h3 style="color: black; text-transform: uppercase;"><?php echo $infoCliente['nombreCliente']; ?></h3>
-        <?php foreach ($infoCliente['tareas'] as $tarea) : ?>
-            <div class="tarea">
-                <p>Tarea: <?php echo $tarea->nombre; ?></p>
-                <p>Estado: 
-                    <span style="color: #0da6f3; font-weight: bold;">Realizado</span>
-                </p>
-                <!-- Enlaces Pendiente y Realizado -->
-                <?php
-                $pendienteClass = $tarea->estado == 0 ? 'pendiente' : '';
-                $realizadoClass = $tarea->estado == 1 ? 'realizado' : '';
-                ?>
-                <a href="#" class="btn-estado <?php echo $pendienteClass; ?>" data-tarea-id="<?php echo $tarea->id; ?>" data-estado-actual="0">
-                    Pendiente
-                </a>
-                <a href="#" class="btn-estado <?php echo $realizadoClass; ?>" data-tarea-id="<?php echo $tarea->id; ?>" data-estado-actual="1">
-                    Realizado
-                </a>
-                <h3>Imagenes:</h3>
-                <div class="imagenes-container">
-            <?php foreach ($imagenesCliente as $imagen) : ?>
-                <div class="container-img-1">
-                <img src="imagenes/<?php echo $imagen->imagen_path; ?>" alt="Imagen del Cliente">
-                </div>
-            <?php endforeach; ?>
-        </div>
+<?php foreach ($clientesDivididos as $grupoClientes) : ?>
+    <div class="fila-clientes">
+        <?php foreach ($grupoClientes as $clienteId => $infoCliente) : ?>
+            <div class="cliente">
+                <h3 style="color: black; text-transform: uppercase;"><?php echo $infoCliente['nombreCliente']; ?></h3>
+                <?php foreach ($infoCliente['tareas'] as $key => $tarea) : ?>
+                    <div class="tarea">
+                        <p>Tarea: <?php echo $tarea->nombre; ?></p>
+                        <p>Estado: 
+                            <span style="color: #0da6f3; font-weight: bold;">Realizado</span>
+                        </p>
+                        <!-- Enlaces Pendiente y Realizado -->
+                        <?php
+                        $pendienteClass = $tarea->estado == 0 ? 'pendiente' : '';
+                        $realizadoClass = $tarea->estado == 1 ? 'realizado' : '';
+                        ?>
+                        <a href="#" class="btn-estado <?php echo $pendienteClass; ?>" data-tarea-id="<?php echo $tarea->id; ?>" data-estado-actual="0">
+                            Pendiente
+                        </a>
+                        <a href="#" class="btn-estado <?php echo $realizadoClass; ?>" data-tarea-id="<?php echo $tarea->id; ?>" data-estado-actual="1">
+                            Realizado
+                        </a>
+
+                        <?php if ($key === count($infoCliente['tareas']) - 1) : ?>
+                            <h3 style="color:black">Imagenes:</h3>
+                            <div class="imagenes-container">
+                                <?php foreach ($imagenesCliente as $imagen) : ?>
+                                    <div class="container-img-1">
+                                        <img src="imagenes/<?php echo $imagen->imagen_path; ?>" alt="Imagen del Cliente">
+                                    </div>
+                                <?php endforeach; ?>
+                            </div>
+                        <?php endif; ?>
+                    </div>
+                <?php endforeach; ?>
             </div>
         <?php endforeach; ?>
     </div>
@@ -75,6 +84,24 @@ include_once __DIR__ . "/footer-dashboard.php";
 ?>
 
 <style>
+    .fila-clientes {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 20px;
+    }
+
+    .cliente {
+        width: 30%; /* Ajusta según tus necesidades */
+        box-sizing: border-box;
+        border: 1px solid #ddd;
+        padding: 10px;
+        margin: 10px;
+    }
+
+    .tarea {
+        margin-bottom: 10px;
+    }
+
     .btn-estado {
         display: inline-block;
         padding: 10px;
@@ -172,7 +199,4 @@ async function actualizarEstadoEnServidor(tareaId, nuevoEstado) {
         console.error('Error al enviar la solicitud al servidor:', error);
     }
 }
-
-
-
 </script>

@@ -90,6 +90,8 @@ class ActiveRecord {
             return false;
         }
     }
+
+    
     
     
 
@@ -237,34 +239,57 @@ public static function whereImagen($columna, $valor) {
         $resultado = self::consultarSQL($query);
         return $resultado ;
     }
-
-    public static function whereAllFechas($columna, $valor,$columna2, $valor2) {
-        $query = "SELECT * FROM " . static::$tabla  ." WHERE {$columna} = '{$valor}' AND {$columna2} = '{$valor2}'";
-        $resultado = self::consultarSQL($query);
-        return  $resultado;
-    }
-
-    public static function whereAllFechas2($columna, $valor) {
-        $query = "SELECT * FROM " . static::$tabla  ." WHERE {$columna} = '{$valor}'";
-        $resultado = self::consultarSQL($query);
-        return  $resultado;
-    }
-
-    public static function whereAllFechasTareas($columna, $valor) {
-        $query = "SELECT clientes.*, GROUP_CONCAT(tareas.nombre) AS nombres_tareas, GROUP_CONCAT(tareas.estado) AS estados_tareas
-                  FROM " . static::$tabla . "
-                  LEFT JOIN tareas ON clientes.id = tareas.cliente_id
-                  WHERE clientes.{$columna} = '{$valor}'  -- Modifica aquí
-                  GROUP BY clientes.id";
+    public static function whereAllFechas($columna, $valor, $columna2, $valor2) {
+        $query = "SELECT * FROM " . static::$tabla . " WHERE {$columna} = '{$valor}' 
+        AND {$columna2} >= '{$valor2} 00:00:00' AND {$columna2} <= '{$valor2} 23:59:59'";
         $resultado = self::consultarSQL($query);
         return $resultado;
     }
+    
 
-    public static function consultaSupervisor($estado, $valor) {
+    public static function whereAllFechas2($columna, $valor) {
+        $fechaInicio = "{$valor} 00:00:00";
+        $fechaFin = "{$valor} 23:59:59";
+    
+        $query = "SELECT * FROM " . static::$tabla . "
+                  WHERE {$columna} >= '{$fechaInicio}' AND {$columna} < '{$fechaFin}'";
+        
+        $resultado = self::consultarSQL($query);
+        
+        return $resultado;
+    }
+    
+
+    public static function whereAllFechasTareas($columna, $valor) {
+        $fechaInicio = "{$valor} 00:00:00";
+        $fechaFin = "{$valor} 23:59:59";
+    
+        $query = "SELECT clientes.*, 
+                         GROUP_CONCAT(tareas.nombre) AS nombres_tareas, 
+                         GROUP_CONCAT(tareas.estado) AS estados_tareas
+                  FROM " . static::$tabla . "
+                  LEFT JOIN tareas ON clientes.id = tareas.cliente_id
+                  WHERE clientes.{$columna} >= '{$fechaInicio}' 
+                        AND clientes.{$columna} < '{$fechaFin}' 
+                        AND tareas.fecha_creacion BETWEEN '{$fechaInicio}' AND '{$fechaFin}'
+                  GROUP BY clientes.id";
+        
+        $resultado = self::consultarSQL($query);
+        
+        return $resultado;
+    }
+
+    public static function consultaSupervisor($estado, $fecha) {
+        $fechaInicio = "{$fecha} 00:00:00";
+        $fechaFin = "{$fecha} 23:59:59";
+    
         $query = "SELECT clientes.*, usuarios.nombre AS nombre_usuario, usuarios.apellido AS apellido_usuario
                   FROM clientes
                   LEFT JOIN usuarios ON clientes.usuario_id = usuarios.id
-                  WHERE confirmado = '{$estado}' AND clientes.fecha_creacion = '{$valor}'";
+                  WHERE confirmado = '{$estado}' 
+                  AND clientes.fecha_creacion BETWEEN '{$fechaInicio}' AND '{$fechaFin}'";
+
+                 
     
         $resultado = self::consultarSQL($query);
     
@@ -276,8 +301,64 @@ public static function whereImagen($columna, $valor) {
     
         return $resultado;
     }
+    
+
+    public static function consultaSupervisorAprobado($fecha) {
+        $fechaInicio = "{$fecha} 00:00:00";
+        $fechaFin = "{$fecha} 23:59:59";
+    
+        $query = "SELECT clientes.*, usuarios.nombre AS nombre_usuario, usuarios.apellido AS apellido_usuario
+                  FROM clientes
+                  LEFT JOIN usuarios ON clientes.usuario_id = usuarios.id
+                  WHERE confirmado = 1 
+                  AND aprobar_envio = 1 
+                  AND clientes.fecha_creacion BETWEEN '{$fechaInicio}' AND '{$fechaFin}'";
+        
+        $resultado = self::consultarSQL($query);
+        
+        // Iterar sobre los resultados y asignar las propiedades
+        foreach ($resultado as $cliente) {
+            $cliente->nombre_usuario = $cliente->nombre_usuario ?? '';
+            $cliente->apellido_usuario = $cliente->apellido_usuario ?? '';
+        }
+    
+        return $resultado;
+    }
+    
+
+    public static function consultaSupervisorRechazado($fecha) {
+        $fechaInicio = "{$fecha} 00:00:00";
+        $fechaFin = "{$fecha} 23:59:59";
+    
+        $query = "SELECT clientes.*, usuarios.nombre AS nombre_usuario, usuarios.apellido AS apellido_usuario
+                  FROM clientes
+                  LEFT JOIN usuarios ON clientes.usuario_id = usuarios.id
+                  WHERE (confirmado = 2 OR aprobar_envio = 2) 
+                  AND clientes.fecha_creacion BETWEEN '{$fechaInicio}' AND '{$fechaFin}'";
+        
+        $resultado = self::consultarSQL($query);
+        
+        // Iterar sobre los resultados y asignar las propiedades
+        foreach ($resultado as $cliente) {
+            $cliente->nombre_usuario = $cliente->nombre_usuario ?? '';
+            $cliente->apellido_usuario = $cliente->apellido_usuario ?? '';
+        }
+    
+        return $resultado;
+    }
+
+    public static function findCliente($id) {
+        $query = "SELECT * FROM " . static::$tabla . " WHERE id = ?";
+        $params = [$id];
+        $resultado = self::consultarSQL($query, $params);
+    
+        return !empty($resultado) ? array_shift($resultado) : null;
+    }
 
     public static function consultaSupervisorFinal($valor) {
+        $fechaInicio = "{$valor} 00:00:00";
+        $fechaFin = "{$valor} 23:59:59";
+    
         $query = "SELECT clientes.*, 
                          usuarios.nombre AS nombre_usuario, 
                          usuarios.apellido AS apellido_usuario,
@@ -289,7 +370,7 @@ public static function whereImagen($columna, $valor) {
                   LEFT JOIN usuarios ON clientes.usuario_id = usuarios.id
                   LEFT JOIN usuarios AS supervisores ON clientes.supervisor_id = supervisores.id
                   LEFT JOIN usuarios AS despacho_usuario ON clientes.despacho_id = despacho_usuario.id
-                  WHERE clientes.fecha_creacion = '{$valor}'";
+                  WHERE clientes.fecha_creacion BETWEEN '{$fechaInicio}' AND '{$fechaFin}'";
     
         $resultado = self::consultarSQL($query);
     
@@ -305,6 +386,34 @@ public static function whereImagen($columna, $valor) {
     
         return $resultado;
     }
+    
+    public static function consultaSupervisorEnvio($estado, $fecha) {
+        $fechaInicio = "{$fecha} 00:00:00";
+        $fechaFin = "{$fecha} 23:59:59";
+    
+        $query = "SELECT clientes.*, usuarios.nombre AS nombre_usuario, usuarios.apellido AS apellido_usuario
+                  FROM clientes
+                  LEFT JOIN usuarios ON clientes.usuario_id = usuarios.id
+                  WHERE aprobar_envio = '{$estado}' 
+                  AND clientes.fecha_creacion BETWEEN '{$fechaInicio}' AND '{$fechaFin}' 
+                  AND clientes.aprobar_envio = 0 
+                  AND clientes.confirmado = 1 
+                  AND clientes.confirmar_envio = 0";
+        
+        $resultado = self::consultarSQL($query);
+        
+        // Iterar sobre los resultados y asignar las propiedades
+        foreach ($resultado as $cliente) {
+            $cliente->nombre_usuario = $cliente->nombre_usuario ?? '';
+            $cliente->apellido_usuario = $cliente->apellido_usuario ?? '';
+        }
+    
+        return $resultado;
+    }
+    
+    
+
+
 
     public static function actualizarEstado($estado, $id, $idsuper) {
         // Formatea la fecha y hora según el formato de tu base de datos
@@ -313,19 +422,45 @@ public static function whereImagen($columna, $valor) {
                   SET confirmado = '{$estado}',
                       supervisor_id = '{$idsuper}'
                   WHERE id = '{$id}'";
+                  
 
         
         // Ejecuta la consulta de actualización
         self::$db->query($query);
     }
-    public static function actualizarEstadoEnvio($estado, $id, $fechaHora, $despachoID) {
+
+    public static function actualizarEstadoSuperEnvio($estado, $id, $idsuper) {
+        // Formatea la fecha y hora según el formato de tu base de datos
+    
+        $query = "UPDATE " . static::$tabla . "
+                  SET aprobar_envio = '{$estado}',
+                      supervisor_id = '{$idsuper}'
+                  WHERE id = '{$id}'";
+
+        
+        // Ejecuta la consulta de actualización
+        self::$db->query($query);
+    }
+
+    public static function confirmarPago($estado, $id) {
+        // Formatea la fecha y hora según el formato de tu base de datos
+    
+        $query = "UPDATE " . static::$tabla . "
+                  SET confirmado = '{$estado}'
+                  WHERE id = '{$id}'";
+    
+        // Ejecuta la consulta de actualización
+        self::$db->query($query);
+    }
+    public static function actualizarEstadoEnvio($estado, $id, $fechaHora, $despachoID,$mensaje) {
         // Formatea la fecha y hora según el formato de tu base de datos
         $fechaHoraFormateada = date('Y-m-d H:i:s', strtotime($fechaHora));
     
         $query = "UPDATE " . static::$tabla . "
                   SET confirmar_envio = '{$estado}',
                       fechaEnvioHora = '{$fechaHoraFormateada}',
-                      despacho_id = '{$despachoID}'
+                      despacho_id = '{$despachoID}',
+                      mensaje_vendedor = '{$mensaje}'
                   WHERE id = '{$id}'";
         
         // Ejecuta la consulta de actualización

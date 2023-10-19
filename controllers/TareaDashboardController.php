@@ -191,6 +191,103 @@ class TareaDashboardController {
             echo json_encode(['success' => false, 'error' => 'Tarea no encontrada']);
         }
     }
+
+    public static function costurasPendientes(Router $router) {
+        isAuth();
+        if ($_SESSION['rol'] !== '7') {
+            // Si no tiene el rol necesario, redirigir o mostrar un mensaje de error
+            header("Location: /sin_permisos");
+            exit;
+        }
+
+
+
+        $fecha = $_GET['fecha'] ?? date("Y-m-d");
+    
+        // Obtener tareas creadas desde la base de datos
+        $tareas = Tareas::whereAllFechas2('fecha_creacion', $fecha);
+    
+        // Obtener información del cliente asociado
+        foreach ($tareas as $tarea) {
+            // Verifica que haya un cliente_id antes de buscar el cliente
+            if ($tarea->cliente_id) {
+                $cliente = Clientes::find($tarea->cliente_id);
+                $tarea->cliente = $cliente;
+            } else {
+                // Si no hay cliente_id, asigna un objeto de cliente vacío
+                $tarea->cliente = new Clientes();
+            }
+        }
+
+        
+
+        $router->render("tareas_costura/costuras_pendientes", [
+            "titulo" => "Costuras Pendientes",
+            "fecha" => $fecha,
+            "tareas" => $tareas
+        ]);
+    }
+    
+    public static function costurasHechas(Router $router) {
+        isAuth();
+        if ($_SESSION['rol'] !== '7') {
+            // Si no tiene el rol necesario, redirigir o mostrar un mensaje de error
+            header("Location: /sin_permisos");
+            exit;
+        }
+
+
+        $fecha = $_GET['fecha'] ?? date("Y-m-d");
+    
+        // Obtener tareas creadas desde la base de datos
+        $tareas = Tareas::whereAllFechas2('fecha_creacion', $fecha);
+    
+        // Obtener información del cliente asociado
+        foreach ($tareas as $tarea) {
+            // Verifica que haya un cliente_id antes de buscar el cliente
+            if ($tarea->cliente_id) {
+                $cliente = Clientes::find($tarea->cliente_id);
+                $tarea->cliente = $cliente;
+            } else {
+                // Si no hay cliente_id, asigna un objeto de cliente vacío
+                $tarea->cliente = new Clientes();
+            }
+        }
+
+        $router->render("tareas_costura/costuras_hechas", [
+            "titulo" => "Costuras Hechas",
+            "fecha" => $fecha,
+            "tareas" => $tareas
+        ]);
+    }
+
+    public static function actualizarEstadoCostura(Router $router) {
+        // Obtener datos de la solicitud
+        $data = json_decode(file_get_contents('php://input'), true);
+    
+        // Validar los datos
+        if (
+            !isset($data['tareaId']) ||
+            !isset($data['nuevoEstado']) ||
+            !isset($data['usuarioId']) ||
+            !isset($data['estadoCostura'])
+        ) {
+            echo json_encode(['success' => false, 'error' => 'Datos incompletos']);
+            return;
+        }
+    
+        // Actualizar solo el estadoCostura de la tarea en la base de datos
+        $tarea = Tareas::find($data['tareaId']);
+        if ($tarea) {
+            $tarea->estadoCostura = $data['estadoCostura']; // Actualizar solo estadoCostura
+            $tarea->completadorCostura_id = $data['usuarioId']; // Agregar el completadorCostura_id
+            $tarea->guardar();
+            echo json_encode(['success' => true, 'mensaje' => 'Estado de tarea actualizado']);
+        } else {
+            echo json_encode(['success' => false, 'error' => 'Tarea no encontrada']);
+        }
+    }
+    
     
 
 

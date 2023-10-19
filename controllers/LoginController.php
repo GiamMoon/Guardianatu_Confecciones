@@ -46,6 +46,9 @@ class LoginController{
                         }else if($usuario->rol === "6"){
                             $_SESSION["rol"] = $usuario->rol ?? null;
                             header("Location: /despacho_pendiente");
+                        }else if($usuario->rol === "7"){
+                            $_SESSION["rol"] = $usuario->rol ?? null;
+                            header("Location: /costuras_pendientes");
                         }
 
                     }

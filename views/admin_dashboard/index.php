@@ -3,6 +3,24 @@ include_once __DIR__ . "/header-dashboard.php";
 
 ?>
 
+<style>
+
+    .ventas_vendedor ul {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+        list-style: none;
+        padding: 0;
+        width: 100%; /* Asegura que la lista ocupe todo el ancho disponible */
+    }
+
+    .ventas_vendedor li {
+        border: 1px solid black;
+        padding: 10px;
+        width: calc(33.33% - 20px); /* Calcula el ancho para que haya tres elementos en una fila con espacio entre ellos */
+    }
+</style>
+
 <div class="busqueda">
     <h2>Buscar Venta</h2>
     <form class="formulario">
@@ -33,22 +51,15 @@ if (count($superviciones) === 0) {
                 $estadoTexto = '';
                 $estadoClase = '';
 
-                switch ($supervicion->confirmado) {
-                    case 1:
-                        $estadoTexto = 'Aprobado';
-                        $estadoClase = 'aprobado';
-                        break;
-                    case 2:
-                        $estadoTexto = 'Rechazado';
-                        $estadoClase = 'rechazado';
-                        break;
-                    case 0:
-                        $estadoTexto = 'En espera';
-                        $estadoClase = 'en-espera';
-                        break;
-                    default:
-                        $estadoTexto = 'Estado desconocido';
-                        $estadoClase = 'estado-desconocido';
+                if ($supervicion->confirmado == 1 && $supervicion->aprobar_envio == 1) {
+                    $estadoTexto = 'Aprobado';
+                    $estadoClase = 'aprobado';
+                } elseif ($supervicion->confirmado == 2 || $supervicion->aprobar_envio == 2) {
+                    $estadoTexto = 'Rechazado';
+                    $estadoClase = 'rechazado';
+                } else {
+                    $estadoTexto = 'En espera';
+                    $estadoClase = 'en-espera';
                 }
                 ?>
 
@@ -64,17 +75,23 @@ if (count($superviciones) === 0) {
             <p>Direccion: <span><?php echo $supervicion->direccion; ?></span></p>
             <p>Fecha de envio: <span><?php echo $supervicion->fechaEnvio; ?></span></p>
             <p>Mensaje: <span><?php echo $supervicion->mensaje; ?></span></p>
-            <p>Estado de supervicion: <span class="<?= $estadoClase ?>"><?php echo $estadoTexto; ?></span></p>
-            <?php if ($supervicion->confirmar_envio == 1) : ?>
-                <p>Estado de Envío: <span style="color: green; font-weight: bold;">Enviado</span></p>
-            <?php elseif ($supervicion->confirmar_envio == 0) : ?>
-                <p>Estado de Envío: <span style="color: orange; font-weight: bold;">En Espera</span></p>
-            <?php endif; ?>
+            <p>Estado de supervisión: <span class="<?= $estadoClase ?>"><?php echo $estadoTexto; ?></span></p>
+                    <?php if ($supervicion->confirmar_envio == 1) : ?>
+                        <p>Estado de Envío: <span style="color: green; font-weight: bold;">Enviado</span></p>
+                    <?php elseif ($supervicion->confirmar_envio == 0) : ?>
+                        <p>Estado de Envío: <span style="color: orange; font-weight: bold;">En Espera</span></p>
+                    <?php endif; ?>
+            <!-- Nuevo párrafo para mostrar el estado de pago -->
+<?php if ($supervicion->pago_confirmado == 1) : ?>
+    <p>Pago Confirmado: <span style="color: green; font-weight: bold;">Confirmado</span></p>
+<?php else : ?>
+    <p>Pago Confirmado: <span style="color: orange; font-weight: bold;">En espera</span></p>
+<?php endif; ?>        
 
             <p>Nombre del Vendedor: <span><?php echo isset($supervicion->nombre_usuario) ? $supervicion->nombre_usuario : '' ?> <?php echo isset($supervicion->apellido_usuario) ? $supervicion->apellido_usuario : ''; ?></span></p>
             <p>Nombre del Supervisor: <span><?php echo isset($supervicion->nombre_supervisor) ? $supervicion->nombre_supervisor : '' ?> <?php echo isset($supervicion->apellido_supervisor) ? $supervicion->apellido_supervisor : ''; ?></span></p>
             <p>Nombre del Despacho: <span><?php echo $supervicion->nombre_despacho; ?> <?php echo $supervicion->apellido_despacho; ?></span></p>
-
+            <p>Mensaje del Vendedor: <span><?php echo $supervicion->mensaje_vendedor; ?></span></p>
 
     
 

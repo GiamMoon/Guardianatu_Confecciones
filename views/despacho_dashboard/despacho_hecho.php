@@ -39,21 +39,14 @@ $despachoController = new DespachoDashboardController();
                 // Cambia el separador de comas a puntos
                 $tareas = explode(',', $cliente->nombres_tareas);
 
-                $estadoTodasTareas = 'Hecho'; // Suponemos que todas las tareas están completas inicialmente
-
+                // Mostrar todas las tareas del cliente
                 foreach ($tareas as $tarea) {
                     // Obtener el estado de la tarea desde la base de datos (o desde donde sea)
                     $estadoTarea = $despachoController->obtenerEstadoTarea($cliente->id, trim($tarea));
 
-                    // Verificar el estado de la tarea y actualizar el estado general
-                    if ($estadoTarea !== '1') {
-                        $estadoTodasTareas = 'Pendiente';
-                        break; // No es necesario continuar verificando si encontramos una tarea pendiente
-                    }
+                    // Mostrar el estado de cada tarea
+                    echo '<p style="color: black; font-weight: bold">Estado de Costura - ' . $tarea . ': <span fo style=" font-weight: bold; color: ' . ($estadoTarea === '1' ? '#0da6f3' : 'orange') . ';">' . ($estadoTarea === '1' ? 'Hecho' : 'Pendiente') . '</span></p>';
                 }
-
-                // Mostrar el mensaje correspondiente según el estado de todas las tareas
-                echo '<p style="color: black;">Estado de tareas: <span fo style=" font-weight: bold; color: ' . ($estadoTodasTareas === 'Hecho' ? '#0da6f3' : 'orange') . ';">' . $estadoTodasTareas . '</span></p>';
             } else {
                 echo '<p style="color: black;">No hay tareas disponibles.</p>';
             }
@@ -86,7 +79,13 @@ $despachoController = new DespachoDashboardController();
             ?>
 
             <p style="color: black; " > Estado Supervicion: <span style="text-transform: uppercase; font-weight: bold; color: <?php echo $color;?>" ><?php echo $estadoConfirmacion; ?></span></p>
-
+            <?php 
+             if (!empty($cliente->mensaje_vendedor)) {
+                echo '<p style="color: black;">Mensaje del Vendedor: <span style="text-transform: uppercase; font-weight: bold; color: #0da6f3;">' . $cliente->mensaje_vendedor . '</span></p>';
+            } else {
+                echo '<p style="color: black;">No hay mensaje del vendedor.</p>';
+            }
+            ?>
 
             
             <?php

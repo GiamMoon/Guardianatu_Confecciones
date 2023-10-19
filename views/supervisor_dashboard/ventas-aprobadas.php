@@ -3,6 +3,27 @@ include_once __DIR__ . "/header-dashboard.php";
 
 ?>
 
+<style>
+    .ventas {
+        /* ... (estilos existentes) */
+        list-style: none;
+        padding: 0;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between; /* Distribuir los elementos en el espacio disponible */
+
+    }
+
+    li {
+        width: calc(50% - 20px); /* Ancho del elemento (ajustar según sea necesario) */
+        margin: 10px;
+        box-sizing: border-box;
+        border: 1px solid black;
+    }
+
+    /* Otros estilos existentes ... */
+</style>
+
 <div class="busqueda">
     <h2>Buscar Venta</h2>
     <form class="formulario">
@@ -66,13 +87,23 @@ if (count($superviciones) === 0) {
             <p>Fecha de envio: <span><?php echo $supervicion->fechaEnvio; ?></span></p>
             <p>Mensaje: <span><?php echo $supervicion->mensaje; ?></span></p>
             <p>Estado: <span class="<?= $estadoClase ?>"><?php echo $estadoTexto; ?></span></p>
-
-
             <?php
-                 $idVenta = $supervicion->id;
-                }//Fin if ?> 
-           
-           <h3>Imágenes:</h3>
+                    // Aquí evaluamos el estado de las tareas y asignamos el color correspondiente
+                    $color = ($supervicion->mensaje_tareas === 'Completado') ? 'green' : 'orange';
+                    ?>
+                    <p>Estado de Cortes: <span style="font-weight: bold; color: <?php echo $color; ?>"><?php echo $supervicion->mensaje_tareas; ?></span></p>
+                    <?php $colorCostura = ($supervicion->mensaje_costura === 'Completado') ? 'green' : 'orange';
+                    ?>
+                    <p>Estado de Costura: <span style="font-weight: bold; color: <?php echo $colorCostura; ?>"><?php echo $supervicion->mensaje_costura; ?></span></p>
+                    <?php
+        // Aprobar Envio: Color rojo si es 2, verde si es 1
+        $colorAprobarEnvio = ($supervicion->aprobar_envio == 2) ? 'red' : 'green';
+    ?>
+                      <p>Aprobar Envio: <span style=" font-weight: bold; text-transform:uppercase;  color: <?php echo $colorAprobarEnvio; ?>">
+        <?php echo ($supervicion->aprobar_envio == 2) ? 'Rechazado' : 'Completado'; ?>
+    </span></p>
+                    
+                    <h3>Imágenes:</h3>
                     <div class="imagenes-container">
                         <?php foreach ($supervicion->imagenes as $imagen) : ?>
                             <div class="container-img-1">
@@ -80,6 +111,14 @@ if (count($superviciones) === 0) {
                             </div>
                         <?php endforeach; ?>
                     </div>
+                </li>
+
+
+            <?php
+                 $idVenta = $supervicion->id;
+                }//Fin if ?> 
+           
+        
                 
         </li>
 

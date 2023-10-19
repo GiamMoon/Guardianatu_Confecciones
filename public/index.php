@@ -25,15 +25,24 @@ $router->get("/vendedor_dashboard",[VendedorDashboardController::class, "index"]
 $router->post("/vendedor_dashboard",[VendedorDashboardController::class, "index"]);
 $router->get("/misventas",[VendedorDashboardController::class, "mis_ventas"]);
 $router->post("/misventas",[VendedorDashboardController::class, "mis_ventas"]);
+$router->post("/confirmarPagoCompleto", [VendedorDashboardController::class, "confirmarPagoCompleto"]);
+$router->post("/eliminarVenta", [VendedorDashboardController::class, "eliminarVenta"]);
+
+
 
 //Zona Supervisor
 $router->get("/supervisor_dashboard",[SupervisorDashboardController::class, "index"]);
 $router->post("/supervisor_dashboard",[SupervisorDashboardController::class, "index"]);
+$router->get("/aprobar_ventas",[SupervisorDashboardController::class, "aprobarVentas"]);
+$router->post("/aprobar_ventas",[SupervisorDashboardController::class, "aprobarVentas"]);
 $router->get("/ventas_aprobadas",[SupervisorDashboardController::class, "ventasAprobadas"]);
 $router->post("/ventas_aprobadas",[SupervisorDashboardController::class, "ventasAprobadas"]);
 $router->get("/ventas_rechazadas",[SupervisorDashboardController::class, "ventasRechazadas"]);
 $router->post("/ventas_rechazadas",[SupervisorDashboardController::class, "ventasRechazadas"]);
-
+$router->get("/cortes",[SupervisorDashboardController::class, "cortes"]);
+$router->post("/cortes",[SupervisorDashboardController::class, "cortes"]);
+$router->get("/costura",[SupervisorDashboardController::class, "costura"]);
+$router->post("/costura",[SupervisorDashboardController::class, "costura"]);
 
 //Zona Tareas
 $router->get("/tareas_dashboard",[TareaDashboardController::class, "index"]);
@@ -49,6 +58,13 @@ $router->post("/tareas_pendientes",[TareaDashboardController::class, "tareasPend
 $router->get("/tareas_hechas",[TareaDashboardController::class, "tareasHechas"]);
 $router->post("/tareas_hechas",[TareaDashboardController::class, "tareasHechas"]);
 $router->post("/actualizar-estado-tarea", [TareaDashboardController::class, "actualizarEstadoTarea"]);
+
+//Zona costura
+$router->get("/costuras_pendientes",[TareaDashboardController::class, "costurasPendientes"]);
+$router->post("/costuras_pendientes",[TareaDashboardController::class, "costurasPendientes"]);
+$router->get("/costuras_hechas",[TareaDashboardController::class, "costurasHechas"]);
+$router->post("/costuras_hechas",[TareaDashboardController::class, "costurasHechas"]);
+$router->post("/actualizar-estado-costura", [TareaDashboardController::class, "actualizarEstadoCostura"]);
 
 //Zona despacho
 $router->get("/despacho_pendiente",[DespachoDashboardController::class, "index"]);

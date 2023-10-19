@@ -102,6 +102,12 @@ class AdminDashboardController{
     }
     public static function guardarGasto(Router $router) {
         isAuth();
+        isAuth();
+        if ($_SESSION['rol'] !== '1') {
+            // Si no tiene el rol necesario, redirigir o mostrar un mensaje de error
+            header("Location: /sin_permisos");
+            exit;
+        }
     
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $tipo = $_POST['tipo'];

@@ -17,6 +17,7 @@ foreach ($tareas as $tarea) {
         ];
     }
     $tareasAgrupadas[$clienteId]['tareas'][] = $tarea;
+    $clientesDivididos = array_chunk($tareasAgrupadas, 3, true);
 }
 
 ?>
@@ -32,21 +33,44 @@ foreach ($tareas as $tarea) {
 </div>
 </div>
 
-<?php foreach ($tareasAgrupadas as $clienteId => $infoCliente) : ?>
-    <div class="cliente">
-        <h3 style="color: black; text-transform: uppercase;"><?php echo $infoCliente['nombreCliente']; ?></h3>
-        <?php foreach ($infoCliente['tareas'] as $tarea) : ?>
-            <div class="tarea">
-                <p>Tarea: <?php echo $tarea->nombre; ?></p>
-                <?php if ($tarea->estado == 0) : ?>
-                    <p>Estado: <span style="color: #8f6200; font-weight: bold;">Pendiente</span></p>
-                <?php else : ?>
-                    <p>Estado: <span style="color: #0da6f3; font-weight: bold;">Realizado</span></p>
-                <?php endif; ?>
+<?php foreach ($clientesDivididos as $grupoClientes) : ?>
+    <div class="fila-clientes">
+        <?php foreach ($grupoClientes as $clienteId => $infoCliente) : ?>
+            <div class="cliente">
+                <h3 style="color: black; text-transform: uppercase;"><?php echo $infoCliente['nombreCliente']; ?></h3>
+                <?php foreach ($infoCliente['tareas'] as $tarea) : ?>
+                    <div class="tarea">
+                        <p>Tarea: <?php echo $tarea->nombre; ?></p>
+                        <?php if ($tarea->estado == 0) : ?>
+                            <p>Estado: <span style="color: #8f6200; font-weight: bold;">Pendiente</span></p>
+                        <?php else : ?>
+                            <p>Estado: <span style="color: #0da6f3; font-weight: bold;">Realizado</span></p>
+                        <?php endif; ?>
+                    </div>
+                <?php endforeach; ?>
             </div>
         <?php endforeach; ?>
     </div>
 <?php endforeach; ?>
+
+<style>
+    .fila-clientes {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        margin-bottom: 20px;
+    }
+
+    .cliente {
+        width: calc(33.33% - 20px);
+        box-sizing: border-box;
+        border: 1px solid #ddd;
+        padding: 10px;
+        margin: 10px;
+    }
+
+    /* Estilos adicionales según sea necesario */
+</style>
 
 
 <?php 

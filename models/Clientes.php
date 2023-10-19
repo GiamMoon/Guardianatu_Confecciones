@@ -6,7 +6,7 @@ class Clientes extends ActiveRecord{
     protected static $tabla = "clientes";
     protected static $columnasDB = ["id","boleta", "nombres", "apellidos", "dni","telefono", "provincia", "distrito", "direccion",
     "fechaEnvio", "precioTotal", "adelanto", "restantePagar", "mensaje","fecha_creacion","usuario_id","confirmado","confirmar_envio",
-    "supervisor_id", "fechaEnvioHora","despacho_id"];
+    "supervisor_id", "fechaEnvioHora","despacho_id","pago_confirmado","mensaje_vendedor","aprobar_envio"];
 
     public $id;
     public $boleta;
@@ -43,6 +43,15 @@ class Clientes extends ActiveRecord{
 
     public $despacho_id;
 
+    public $pago_confirmado;
+    public $mensaje_vendedor;
+
+    public $mensaje_tareas;
+    public $mensaje_costura;
+
+    public $aprobar_envio;
+    
+
     public function __construct($args = []){
         $this->id = $args["id"] ?? "";
         $this->boleta = $args["boleta"] ?? "";
@@ -59,13 +68,17 @@ class Clientes extends ActiveRecord{
         $this->restantePagar = $args["restantePagar"] ?? 0;
         $this->mensaje = $args["mensaje"] ?? "";
         $this->imagenes = $args["imagenes"] ?? []; 
-        $this->fecha_creacion = $args["fecha_creacion"] ?? date('Y-m-d');
+        $this->fecha_creacion = $args["fecha_creacion"] ?? date('Y-m-d H:i:s');
         $this->usuario_id = $args["usuario_id"] ?? "";
         $this->confirmado = $args["confirmado"] ?? 0;
         $this->confirmar_envio = $args["confirmar_envio"] ?? 0;
         $this->supervisor_id = $args["supervisor_id"] ?? "";
         $this->fechaEnvioHora = $args["fechaEnvioHora"] ?? ($this->fechaEnvio);
         $this->despacho_id = $args["despacho_id"] ?? "";
+        $this->pago_confirmado = $args["pago_confirmado"] ?? 0;
+        $this->mensaje_vendedor = $args["mensaje_vendedor"] ?? "";
+        $this->aprobar_envio = $args["aprobar_envio"] ?? 0;
+
         
 
     }
@@ -130,6 +143,24 @@ class Clientes extends ActiveRecord{
     }
 
     
+    public function confirmarPagoCompleto() {
+        // Actualizar el valor de pago_confirmado a 1
+        $this->pago_confirmado = 1;
+        // Guardar los cambios en la base de datos
+        $this->guardar();
+    }
+
+    public static function todos() {
+        $query = "SELECT * FROM " . static::$tabla;
+        $resultados = self::consultarSQL($query);
+        return $resultados;
+    }
+
+    public function eliminar() {
+        $query = "DELETE FROM "  . static::$tabla . " WHERE id = " . self::$db->escape_string($this->id) . " LIMIT 1";
+        $resultado = self::$db->query($query);
+        return $resultado;
+    }
 
 
 }

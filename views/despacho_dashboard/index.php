@@ -3,7 +3,7 @@ use Controllers\DespachoDashboardController;
 include_once __DIR__ . "/header-dashboard.php";
 $despachoController = new DespachoDashboardController();
 
-
+$clientesDivididos = array_chunk($clientes, 2);
 ?>
 
 <div class="busqueda">
@@ -18,8 +18,10 @@ $despachoController = new DespachoDashboardController();
 </div>
 
 <ul>
-    <?php foreach ($clientes as $cliente): ?>
-        <?php if ($cliente->confirmar_envio === "0"): ?>
+    <?php foreach ($clientesDivididos as $grupoClientes) : ?>
+        <div class="fila-clientes">
+            <?php foreach ($grupoClientes as $cliente): ?>
+                <?php if ($cliente->confirmar_envio === "0" && $cliente->confirmado === "1" && $cliente->aprobar_envio === "1"): ?>
         <li>
         
             <h2 style="color: black;" >Informacion General</h2>
@@ -40,21 +42,14 @@ $despachoController = new DespachoDashboardController();
                 // Cambia el separador de comas a puntos
                 $tareas = explode(',', $cliente->nombres_tareas);
 
-                $estadoTodasTareas = 'Hecho'; // Suponemos que todas las tareas están completas inicialmente
-
+                // Mostrar todas las tareas del cliente
                 foreach ($tareas as $tarea) {
                     // Obtener el estado de la tarea desde la base de datos (o desde donde sea)
                     $estadoTarea = $despachoController->obtenerEstadoTarea($cliente->id, trim($tarea));
 
-                    // Verificar el estado de la tarea y actualizar el estado general
-                    if ($estadoTarea !== '1') {
-                        $estadoTodasTareas = 'Pendiente';
-                        break; // No es necesario continuar verificando si encontramos una tarea pendiente
-                    }
+                    // Mostrar el estado de cada tarea
+                    echo '<p style="color: black; font-weight: bold">Estado de Costura - ' . $tarea . ': <span fo style=" font-weight: bold; color: ' . ($estadoTarea === '1' ? '#0da6f3' : 'orange') . ';">' . ($estadoTarea === '1' ? 'Hecho' : 'Pendiente') . '</span></p>';
                 }
-
-                // Mostrar el mensaje correspondiente según el estado de todas las tareas
-                echo '<p style="color: black;">Estado de tareas: <span fo style=" font-weight: bold; color: ' . ($estadoTodasTareas === 'Hecho' ? '#0da6f3' : 'orange') . ';">' . $estadoTodasTareas . '</span></p>';
             } else {
                 echo '<p style="color: black;">No hay tareas disponibles.</p>';
             }
@@ -123,24 +118,36 @@ $despachoController = new DespachoDashboardController();
                     <label  style="color: black;" for="fechaHora">Fecha y Hora de entrega</label>
                     <input type="datetime-local" id="fechaHora" name="fechaHora" required>
                 </div>
-                <input type="hidden" id="clienteID" name="clienteID" value="">
-            </form>
+                <div class="campo">
+    <label style="color: black;" for="mensajeVendedor">Mensaje del Vendedor</label>
+    <textarea id="mensajeVendedor" name="mensajeVendedor" rows="4" cols="50"></textarea>
+</div>
+<input type="hidden" id="clienteID" name="clienteID" value="">
 
+<a href="#" onclick="confirmarEnvio(<?php echo $cliente->id; ?>); return false;" style="display:inline-block; background-color: green; color: white; padding: 20px; margin: 10px 5px; text-decoration: none; border-radius: 20px; text-transform: uppercase;">
+    Confirmar
+</a>
 
+</form>
+</li>
 
-        </li>
-        <a href="#" onclick="confirmarEnvio(<?php echo $cliente->id; ?>); return false;" style="display:inline-block; background-color: green; color: white; padding: 20px; margin: 10px 5px; text-decoration: none; border-radius: 20px; text-transform: uppercase;">
-            Confirmar
-        </a>
-
-        <hr style="border-top: 1px solid black;">
-        <?php endif; ?>
-    <?php endforeach; ?>
+<?php endif; ?>
+<?php endforeach; ?>
+</div>
+<?php endforeach; ?>
 </ul>
 
 
 <?php include_once __DIR__ . "/footer-dashboard.php"; 
 ?>
+
+<style>
+    .fila-clientes {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 20px;
+    }
+</style>
 
 <script>
     document.addEventListener("DOMContentLoaded", function() {
@@ -174,7 +181,13 @@ $despachoController = new DespachoDashboardController();
     console.log("Botón presionado");
     const fechaHoraInput = document.querySelector("#fechaHora");
     const fechaHora = fechaHoraInput.value;
+
+    // Obtener el mensaje del vendedor
+    const mensajeVendedorInput = document.querySelector("#mensajeVendedor");
+    const mensajeVendedor = mensajeVendedorInput.value;
+
     console.log("Fecha y Hora:", fechaHora);
+    console.log("Mensaje del Vendedor:", mensajeVendedor);
 
     var xhr = new XMLHttpRequest();
     xhr.open("POST", "/confirmar-envio", true);
@@ -194,7 +207,8 @@ $despachoController = new DespachoDashboardController();
         }
     };
 
-    xhr.send("cliente_id=" + clienteID + "&fecha_hora=" + fechaHora);
+    // Agregar el mensaje del vendedor a los datos enviados al servidor
+    xhr.send("cliente_id=" + clienteID + "&fecha_hora=" + fechaHora + "&mensaje_vendedor=" + encodeURIComponent(mensajeVendedor));
 }
 
 </script>
