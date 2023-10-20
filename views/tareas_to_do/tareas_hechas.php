@@ -7,13 +7,13 @@ usort($tareas, function ($a, $b) {
     return strtotime($a->fecha_creacion) - strtotime($b->fecha_creacion);
 });
 
-// Agrupar tareas por ID de cliente y estado 1
+// Agrupar tareas por ID de cliente y estado 1 (Realizado)
 $tareasAgrupadas = [];
 foreach ($tareas as $tarea) {
     $clienteId = $tarea->cliente->id;
     $imagenesCliente = Imagenes::whereImagen('clienteImagen_id', $clienteId);
 
-    // Solo considerar tareas con estado 1
+    // Solo considerar tareas con estado 1 (Realizado)
     if ($tarea->estado == 1) {
         if (!isset($tareasAgrupadas[$clienteId])) {
             $tareasAgrupadas[$clienteId] = [
@@ -46,7 +46,7 @@ $clientesDivididos = array_chunk($tareasAgrupadas, 3, true);
                 <h3 style="color: black; text-transform: uppercase;"><?php echo $infoCliente['nombreCliente']; ?></h3>
                 <?php foreach ($infoCliente['tareas'] as $key => $tarea) : ?>
                     <div class="tarea">
-                        <p>Tarea: <?php echo $tarea->nombre; ?></p>
+                        <p class="tarea-texto">Tarea: <?php echo $tarea->nombre; ?></p>
                         <p>Estado: 
                             <span style="color: #0da6f3; font-weight: bold;">Realizado</span>
                         </p>
@@ -107,7 +107,6 @@ include_once __DIR__ . "/footer-dashboard.php";
         padding: 10px;
         margin: 5px;
         text-decoration: none;
-        color: white;
         cursor: pointer;
         border: none;
         border-radius: 5px;
@@ -123,6 +122,10 @@ include_once __DIR__ . "/footer-dashboard.php";
         color: white;
         background-color: #4da6ff;
     }
+
+    .tarea-texto {
+        cursor: pointer;
+    }
 </style>
 
 <script>
@@ -133,6 +136,7 @@ include_once __DIR__ . "/footer-dashboard.php";
 function iniciarApp() {
     buscarPorFecha();
     manejarBotonesEstado();
+    resaltarTareasIguales();
 }
 
 function buscarPorFecha() {
@@ -149,7 +153,7 @@ function manejarBotonesEstado() {
     botonesEstado.forEach((boton) => {
         boton.addEventListener("click", async function () {
             const tareaId = boton.dataset.tareaId;
-            const nuevoEstado = boton.dataset.estadoActual; // Asegúrate de que sea dataset.estadoActual
+            const nuevoEstado = boton.dataset.estadoActual;
 
             // Actualiza el estado de la tarea en el servidor
             await actualizarEstadoEnServidor(tareaId, nuevoEstado);
@@ -172,10 +176,9 @@ function manejarBotonesEstado() {
     });
 }
 
-
 async function actualizarEstadoEnServidor(tareaId, nuevoEstado) {
     try {
-        // Obtener el ID del usuario de sesión (puedes ajustar esto según tu lógica de autenticación)
+        // Obtener el ID del usuario de sesión (ajusta esto según tu lógica de autenticación)
         const usuarioId = <?php echo $_SESSION['id'] ?? null; ?>;
 
         const response = await fetch('/actualizar-estado-tarea', {
@@ -198,5 +201,58 @@ async function actualizarEstadoEnServidor(tareaId, nuevoEstado) {
     } catch (error) {
         console.error('Error al enviar la solicitud al servidor:', error);
     }
+}
+
+function resaltarTareasIguales() {
+    const tareas = document.querySelectorAll(".tarea-texto");
+
+    tareas.forEach((tarea, index) => {
+        tarea.dataset.originalText = tarea.innerText.trim(); // Almacena el texto original
+        tarea.dataset.isHighlighted = "false"; // Bandera para rastrear si la tarea está resaltada
+
+        tarea.addEventListener("click", () => {
+            const estaResaltada = tarea.dataset.isHighlighted === "true";
+            const tareaTexto = tarea.innerText;
+            const tareaTextoLimpio = tareaTexto.split("(")[0].trim().toLowerCase(); // Convertir a minúsculas
+
+            let tareasIguales = [];
+
+            tareas.forEach((otraTarea) => {
+                const otraTareaTexto = otraTarea.innerText;
+                const otraTareaTextoLimpio = otraTareaTexto.split("(")[0].trim().toLowerCase();
+
+                if (tareaTextoLimpio === otraTareaTextoLimpio) {
+                    tareasIguales.push(otraTarea);
+
+                    if (estaResaltada) {
+                        otraTarea.innerText = otraTarea.dataset.originalText;
+                        otraTarea.style.fontWeight = "normal";
+                        otraTarea.style.color = "black";
+                        otraTarea.dataset.isHighlighted = "false";
+                    } else {
+                        otraTarea.style.fontWeight = "bold";
+                        otraTarea.style.color = "red";
+                        otraTarea.dataset.isHighlighted = "true";
+                    }
+                }
+            });
+
+            if (tareasIguales.length <= 1) {
+                tarea.style.fontWeight = "normal";
+                tarea.style.color = "black";
+                tarea.innerText = tarea.dataset.originalText;
+                tarea.dataset.isHighlighted = "false";
+            } else {
+                tareasIguales.forEach((t) => {
+                    if (!estaResaltada) {
+                        t.style.fontWeight = "bold";
+                        t.style.color = "red";
+                        t.innerText = t.dataset.originalText.toUpperCase();
+                        t.dataset.isHighlighted = "true";
+                    }
+                });
+            }
+        });
+    });
 }
 </script>

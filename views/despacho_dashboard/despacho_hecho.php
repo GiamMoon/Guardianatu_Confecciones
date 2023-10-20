@@ -63,7 +63,7 @@ Copy code
             <p style="color: black;">Distrito: <span style="text-transform: uppercase; font-weight: bold; color: #0da6f3;" ><?php echo $cliente->distrito; ?></span></p>
             <p style="color: black;">Dirección: <span style="text-transform: uppercase; font-weight: bold; color: #0da6f3;" ><?php echo $cliente->direccion; ?></span></p>
             <p style="color: black;">Fecha de Envío: <span style="text-transform: uppercase; font-weight: bold; color: #0da6f3;" ><?php echo $cliente->fechaEnvio; ?></span></p>
-            <p style="color: black;">Mensaje: <span style="text-transform: uppercase; font-weight: bold; color: #0da6f3;" ><?php echo $cliente->mensaje; ?></span></p>
+            <p style="color: black;">Mensaje vendedor: <span style="text-transform: uppercase; font-weight: bold; color: #0da6f3;" ><?php echo $cliente->mensaje; ?></span></p>
             <?php
             // Asegúrate de que $cliente->nombres_tareas y $cliente->estados_tareas no sean nulos
             if ($cliente->nombres_tareas !== null) {
@@ -107,7 +107,7 @@ Copy code
             <p style="color: black; " > Estado Supervicion: <span style="text-transform: uppercase; font-weight: bold; color: <?php echo $color;?>" ><?php echo $estadoConfirmacion; ?></span></p>
             <?php 
              if (!empty($cliente->mensaje_vendedor)) {
-                echo '<p style="color: black;">Mensaje del Vendedor: <span style="text-transform: uppercase; font-weight: bold; color: #0da6f3;">' . $cliente->mensaje_vendedor . '</span></p>';
+                echo '<p style="color: black;">Mensaje Despacho: <span style="text-transform: uppercase; font-weight: bold; color: #0da6f3;">' . $cliente->mensaje_vendedor . '</span></p>';
             } else {
                 echo '<p style="color: black;">No hay mensaje del vendedor.</p>';
             }

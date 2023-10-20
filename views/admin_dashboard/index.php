@@ -74,7 +74,7 @@ if (count($superviciones) === 0) {
             <p>Distrito: <span><?php echo $supervicion->distrito; ?></span></p>
             <p>Direccion: <span><?php echo $supervicion->direccion; ?></span></p>
             <p>Fecha de envio: <span><?php echo $supervicion->fechaEnvio; ?></span></p>
-            <p>Mensaje: <span><?php echo $supervicion->mensaje; ?></span></p>
+            <p>Mensaje Vendedor: <span><?php echo $supervicion->mensaje; ?></span></p>
             <p>Estado de supervisión: <span class="<?= $estadoClase ?>"><?php echo $estadoTexto; ?></span></p>
                     <?php if ($supervicion->confirmar_envio == 1) : ?>
                         <p>Estado de Envío: <span style="color: green; font-weight: bold;">Enviado</span></p>
@@ -91,7 +91,7 @@ if (count($superviciones) === 0) {
             <p>Nombre del Vendedor: <span><?php echo isset($supervicion->nombre_usuario) ? $supervicion->nombre_usuario : '' ?> <?php echo isset($supervicion->apellido_usuario) ? $supervicion->apellido_usuario : ''; ?></span></p>
             <p>Nombre del Supervisor: <span><?php echo isset($supervicion->nombre_supervisor) ? $supervicion->nombre_supervisor : '' ?> <?php echo isset($supervicion->apellido_supervisor) ? $supervicion->apellido_supervisor : ''; ?></span></p>
             <p>Nombre del Despacho: <span><?php echo $supervicion->nombre_despacho; ?> <?php echo $supervicion->apellido_despacho; ?></span></p>
-            <p>Mensaje del Vendedor: <span><?php echo $supervicion->mensaje_vendedor; ?></span></p>
+            <p>Mensaje de Despacho: <span><?php echo $supervicion->mensaje_vendedor; ?></span></p>
 
     
 

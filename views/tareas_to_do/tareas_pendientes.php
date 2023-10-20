@@ -46,7 +46,13 @@ $clientesDivididos = array_chunk($tareasAgrupadas, 3, true);
                 <h3 style="color: black; text-transform: uppercase;"><?php echo $infoCliente['nombreCliente']; ?></h3>
                 <?php foreach ($infoCliente['tareas'] as $key => $tarea) : ?>
                     <div class="tarea">
-                        <p>Tarea: <?php echo $tarea->nombre; ?></p>
+                        <?php
+                            $tareaTexto = $tarea->nombre;
+                            $tareaTextoLimpio = strtolower($tareaTexto);
+                        ?>
+                        <p class="tarea-texto">
+                            Tarea: <?php echo $tareaTexto; ?>
+                        </p>
                         <p>Estado: 
                             <span style="color: #8f6200; font-weight: bold;">Pendiente</span>
                         </p>
@@ -55,15 +61,14 @@ $clientesDivididos = array_chunk($tareasAgrupadas, 3, true);
                         $pendienteClass = $tarea->estado == 0 ? 'pendiente' : '';
                         $realizadoClass = $tarea->estado == 1 ? 'realizado' : '';
                         ?>
-                        <a href="#" class="btn-estado <?php echo $pendienteClass; ?>" data-tarea-id="<?php echo $tarea->id; ?>" data-estado-actual="0">
-                            Pendiente
-                        </a>
-                        <a href="#" class="btn-estado <?php echo $realizadoClass; ?>" data-tarea-id="<?php echo $tarea->id; ?>" data-estado-actual="1">
-                            Realizado
-                        </a>
-
+<a href="#" class="btn-estado pendiente" data-tarea-id="<?php echo $tarea->id; ?>" data-estado-actual="0">
+    Pendiente
+</a>
+<a href="#" class="btn-estado" data-tarea-id="<?php echo $tarea->id; ?>" data-estado-actual="1">
+    Realizado
+</a>
                         <?php if ($key === count($infoCliente['tareas']) - 1) : ?>
-                            <h3 style="color: black;">Imagenes:</h3>
+                            <h3 style="color:black">Imagenes:</h3>
                             <div class="imagenes-container">
                                 <?php foreach ($imagenesCliente as $imagen) : ?>
                                     <div class="container-img-1">
@@ -78,6 +83,7 @@ $clientesDivididos = array_chunk($tareasAgrupadas, 3, true);
         <?php endforeach; ?>
     </div>
 <?php endforeach; ?>
+
 
 <style>
     .fila-clientes {
@@ -119,17 +125,31 @@ $clientesDivididos = array_chunk($tareasAgrupadas, 3, true);
         color: white;
         background-color: #4da6ff;
     }
+
+    .tarea-texto {
+        cursor: pointer;
+    }
 </style>
 
-<script>
-    document.addEventListener("DOMContentLoaded", function(){
-        iniciarApp();
-    });
 
-    function iniciarApp(){
-        buscarPorFecha();
-        manejarBotonesEstado();
-    }
+<script>
+document.addEventListener("DOMContentLoaded", function(){
+    iniciarApp();
+});
+
+function iniciarApp(){
+    buscarPorFecha();
+    manejarBotonesEstado();
+    resaltarTareasIguales();
+}
+
+function buscarPorFecha(){
+    const fechaInput = document.querySelector("#fecha");
+    fechaInput.addEventListener("input", function(e){
+        const fechaSeleccionada = e.target.value;
+        window.location = `?fecha=${fechaSeleccionada}`;
+    });
+}
 
     function buscarPorFecha(){
         const fechaInput = document.querySelector("#fecha");
@@ -194,4 +214,64 @@ $clientesDivididos = array_chunk($tareasAgrupadas, 3, true);
             console.error('Error al enviar la solicitud al servidor:', error);
         }
     }
+
+function resaltarTareasIguales() {
+    const tareas = document.querySelectorAll(".tarea-texto");
+
+    tareas.forEach((tarea, index) => {
+        tarea.dataset.originalText = tarea.innerText.trim(); // Almacena el texto original
+        tarea.dataset.isHighlighted = "false"; // Bandera para rastrear si la tarea está resaltada
+
+        tarea.addEventListener("click", () => {
+            const estaResaltada = tarea.dataset.isHighlighted === "true";
+            const tareaTexto = tarea.innerText;
+            const tareaTextoLimpio = tareaTexto.split("(")[0].trim().toLowerCase(); // Convertir a minúsculas
+
+            let tareasIguales = [];
+
+            tareas.forEach((otraTarea) => {
+                const otraTareaTexto = otraTarea.innerText;
+                const otraTareaTextoLimpio = otraTareaTexto.split("(")[0].trim().toLowerCase();
+
+                if (tareaTextoLimpio === otraTareaTextoLimpio) {
+                    tareasIguales.push(otraTarea);
+
+                    if (estaResaltada) {
+                        otraTarea.innerText = otraTarea.dataset.originalText;
+                        otraTarea.style.fontWeight = "normal";
+                        otraTarea.style.color = "black";
+                        otraTarea.dataset.isHighlighted = "false";
+                    } else {
+                        otraTarea.style.fontWeight = "bold";
+                        otraTarea.style.color = "red";
+                        otraTarea.dataset.isHighlighted = "true";
+                    }
+                }
+            });
+
+            if (tareasIguales.length <= 1) {
+                tarea.style.fontWeight = "normal";
+                tarea.style.color = "black";
+                tarea.innerText = tarea.dataset.originalText;
+                tarea.dataset.isHighlighted = "false";
+            } else {
+                tareasIguales.forEach((t) => {
+                    if (!estaResaltada) {
+                        t.style.fontWeight = "bold";
+                        t.style.color = "red";
+                        t.innerText = t.dataset.originalText.toUpperCase();
+                        t.dataset.isHighlighted = "true";
+                    }
+                });
+            }
+        });
+    });
+}
+
+
+
+
+
+
+
 </script>

@@ -18,13 +18,12 @@ $clientesDivididos = array_chunk($clientes, 2);
 </div>
 
 <ul>
-    <?php foreach ($clientesDivididos as $grupoClientes) : ?>
-        <div class="fila-clientes">
+<div class="fila-clientes">
+        <?php foreach ($clientesDivididos as $grupoClientes) : ?>
             <?php foreach ($grupoClientes as $cliente): ?>
                 <?php if ($cliente->confirmar_envio === "0" && $cliente->confirmado === "1" && $cliente->aprobar_envio === "1"): ?>
-        <li>
-        
-            <h2 style="color: black;" >Informacion General</h2>
+                    <li>
+                        <h2 style="color: black;" >Información General</h2>
             <p style="color: black;">Fecha de Creación: <span style="text-transform: uppercase; font-weight: bold; color: #0da6f3;" ><?php echo $cliente->fecha_creacion; ?></span></p>
             <p style="color: black;">Boleta: <span style="text-transform: uppercase; font-weight: bold; color: #0da6f3;" ><?php echo $cliente->boleta; ?></span></p>
             <p style="color: black;">Nombres: <span style="text-transform: uppercase; font-weight: bold; color: #0da6f3;" ><?php echo $cliente->nombres; ?></span></p>
@@ -35,7 +34,7 @@ $clientesDivididos = array_chunk($clientes, 2);
             <p style="color: black;">Distrito: <span style="text-transform: uppercase; font-weight: bold; color: #0da6f3;" ><?php echo $cliente->distrito; ?></span></p>
             <p style="color: black;">Dirección: <span style="text-transform: uppercase; font-weight: bold; color: #0da6f3;" ><?php echo $cliente->direccion; ?></span></p>
             <p style="color: black;">Fecha de Envío: <span style="text-transform: uppercase; font-weight: bold; color: #0da6f3;" ><?php echo $cliente->fechaEnvio; ?></span></p>
-            <p style="color: black;">Mensaje: <span style="text-transform: uppercase; font-weight: bold; color: #0da6f3;" ><?php echo $cliente->mensaje; ?></span></p>
+            <p style="color: black;">Mensaje Vendedor: <span style="text-transform: uppercase; font-weight: bold; color: #0da6f3;" ><?php echo $cliente->mensaje; ?></span></p>
             <?php
             // Asegúrate de que $cliente->nombres_tareas y $cliente->estados_tareas no sean nulos
             if ($cliente->nombres_tareas !== null) {
@@ -130,11 +129,10 @@ $clientesDivididos = array_chunk($clientes, 2);
 
 </form>
 </li>
-
-<?php endif; ?>
-<?php endforeach; ?>
-</div>
-<?php endforeach; ?>
+                <?php endif; ?>
+            <?php endforeach; ?>
+        <?php endforeach; ?>
+    </div>
 </ul>
 
 
@@ -146,6 +144,10 @@ $clientesDivididos = array_chunk($clientes, 2);
         display: flex;
         justify-content: space-between;
         margin-bottom: 20px;
+    }
+
+    .fila-clientes li {
+        width: 48%; /* Esto ajusta el ancho de cada cliente para mostrar 2 en la misma fila */
     }
 </style>
 

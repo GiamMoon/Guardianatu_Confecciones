@@ -128,10 +128,16 @@ if (count($superviciones) === 0) {
                         <?php endforeach; ?>
                     </div>
 
+                    <?php
+                if ($supervicion->mensaje_tareas === 'Completado' && $supervicion->mensaje_costura === 'Completado') {
+                ?>
                 <form class="contenedor-botones" method="POST" action="/supervisor_dashboard">
                     <input type="hidden" name="id" value="<?php echo $supervicion->id; ?>">
                     <input type="submit" class="boton_supervisor-verde" value="Aprobar" name="aprobar_venta">
                 </form>
+                <?php
+                }
+                ?>
 
                 <?php
                         echo "</li>"; 
