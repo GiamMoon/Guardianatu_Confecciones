@@ -4,11 +4,6 @@ include_once __DIR__ . "/header-dashboard.php";
 $despachoController = new DespachoDashboardController();
 ?>
 
-
-Entendido. Si deseas que el texto fluya a una línea siguiente en lugar de ocultarse, puedes usar la propiedad word-wrap y configurarla a break-word en el estilo de tu clase .cliente. Aquí está la modificación correspondiente:
-
-css
-Copy code
 <style>
     .clientes-lista {
         list-style: none;

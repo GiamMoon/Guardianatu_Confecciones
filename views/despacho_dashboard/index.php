@@ -4,6 +4,11 @@ include_once __DIR__ . "/header-dashboard.php";
 $despachoController = new DespachoDashboardController();
 
 $clientesDivididos = array_chunk($clientes, 2);
+function dividirTextoEnLineas($texto, $caracteresPorLinea) {
+    $lineas = str_split($texto, $caracteresPorLinea);
+    return implode("<br>", $lineas);
+}
+
 ?>
 
 <div class="busqueda">
@@ -17,8 +22,8 @@ $clientesDivididos = array_chunk($clientes, 2);
 </div>
 </div>
 
-<ul>
-<div class="fila-clientes">
+<ul class="fila-clientes">
+           
         <?php foreach ($clientesDivididos as $grupoClientes) : ?>
             <?php foreach ($grupoClientes as $cliente): ?>
                 <?php if ($cliente->confirmar_envio === "0" && $cliente->confirmado === "1" && $cliente->aprobar_envio === "1"): ?>
@@ -34,7 +39,7 @@ $clientesDivididos = array_chunk($clientes, 2);
             <p style="color: black;">Distrito: <span style="text-transform: uppercase; font-weight: bold; color: #0da6f3;" ><?php echo $cliente->distrito; ?></span></p>
             <p style="color: black;">Dirección: <span style="text-transform: uppercase; font-weight: bold; color: #0da6f3;" ><?php echo $cliente->direccion; ?></span></p>
             <p style="color: black;">Fecha de Envío: <span style="text-transform: uppercase; font-weight: bold; color: #0da6f3;" ><?php echo $cliente->fechaEnvio; ?></span></p>
-            <p style="color: black;">Mensaje Vendedor: <span style="text-transform: uppercase; font-weight: bold; color: #0da6f3;" ><?php echo $cliente->mensaje; ?></span></p>
+            <p class="pa" style="color: black;">Mensaje Vendedor: <span style="text-transform: uppercase; font-weight: bold; color: #0da6f3;"><?php echo dividirTextoEnLineas($cliente->mensaje, 40); ?></span></p>
             <?php
             // Asegúrate de que $cliente->nombres_tareas y $cliente->estados_tareas no sean nulos
             if ($cliente->nombres_tareas !== null) {
@@ -140,15 +145,21 @@ $clientesDivididos = array_chunk($clientes, 2);
 ?>
 
 <style>
-    .fila-clientes {
-        display: flex;
-        justify-content: space-between;
-        margin-bottom: 20px;
-    }
+ .fila-clientes {
+    display: flex;
+    flex-wrap: wrap;
+}
 
-    .fila-clientes li {
-        width: 48%; /* Esto ajusta el ancho de cada cliente para mostrar 2 en la misma fila */
-    }
+.fila-clientes li {
+    width: 50%;
+    box-sizing: border-box; /* Para incluir el padding en el ancho del elemento */
+    margin-bottom: 100px;
+}
+
+.pa{
+    overflow: auto; /* O puedes usar 'scroll' si prefieres una barra de desplazamiento */
+
+}
 </style>
 
 <script>
