@@ -88,30 +88,37 @@ public static function obtenerEstadoTareasCliente($clienteID) {
 
 
 
-public static function obtenerTareasAgrupadas() {
+public static function obtenerTareasAgrupadas($fecha) {
+    $fechaInicio = "{$fecha} 00:00:00";
+    $fechaFin = "{$fecha} 23:59:59";
+    
     $tareas = static::all(); // Obtén todas las tareas
     $tareasAgrupadas = [];
 
     foreach ($tareas as $tarea) {
         $clienteId = $tarea->cliente_id;
 
-        // Obtener el cliente asociado a la tarea
-        $cliente = Clientes::find($clienteId);
+        // Verifica si la tarea se encuentra en el rango de fechas especificado
+        if ($tarea->fecha_creacion >= $fechaInicio && $tarea->fecha_creacion <= $fechaFin) {
+            // Obtener el cliente asociado a la tarea
+            $cliente = Clientes::find($clienteId);
 
-        if ($cliente) {
-            if (!isset($tareasAgrupadas[$clienteId])) {
-                $tareasAgrupadas[$clienteId] = [
-                    'nombreCliente' => $cliente->nombres . ' ' . $cliente->apellidos,
-                    'tareas' => [],
-                ];
+            if ($cliente) {
+                if (!isset($tareasAgrupadas[$clienteId])) {
+                    $tareasAgrupadas[$clienteId] = [
+                        'nombreCliente' => $cliente->nombres . ' ' . $cliente->apellidos,
+                        'tareas' => [],
+                    ];
+                }
+
+                $tareasAgrupadas[$clienteId]['tareas'][] = $tarea;
             }
-
-            $tareasAgrupadas[$clienteId]['tareas'][] = $tarea;
         }
     }
 
     return $tareasAgrupadas;
 }
+
 
 
     

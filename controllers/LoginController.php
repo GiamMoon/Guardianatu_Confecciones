@@ -74,6 +74,16 @@ class LoginController{
     }
 
     public static function crear(Router $router){
+
+        isAuth();
+
+        if ($_SESSION['rol'] !== '1') {
+            // Si no tiene el rol necesario, redirigir o mostrar un mensaje de error
+            header("Location: /sin_permisos");
+            exit;
+        }
+
+
         $usuario = new Usuario;
         //alertas vacias
         $alertas = [];
@@ -93,6 +103,8 @@ class LoginController{
 
                     //Crear el usuario
                     $resultado = $usuario->guardar();
+
+                    header("Location: /ventas");
 
                 }
             }

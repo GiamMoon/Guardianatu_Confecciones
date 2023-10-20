@@ -71,7 +71,7 @@ $despachoController = new DespachoDashboardController();
                     $estadoTarea = $despachoController->obtenerEstadoTarea($cliente->id, trim($tarea));
 
                     // Mostrar el estado de cada tarea
-                    echo '<p style="color: black; font-weight: bold">Estado de Costura - ' . $tarea . ': <span fo style=" font-weight: bold; color: ' . ($estadoTarea === '1' ? '#0da6f3' : 'orange') . ';">' . ($estadoTarea === '1' ? 'Hecho' : 'Pendiente') . '</span></p>';
+                    echo '<p style="color: black; font-weight: bold" class="tarea-costura tarea-activa" onclick="cambiarColorYMayusculas(this);">Tarea de Costura: <span style=" font-weight: bold;">' . $tarea . '</span></p>';
                 }
             } else {
                 echo '<p style="color: black;">No hay tareas disponibles.</p>';
@@ -167,4 +167,16 @@ $despachoController = new DespachoDashboardController();
             window.location = `?fecha=${fechaSeleccionada}`;
         });
     }
+</script>
+
+<script>
+   function cambiarColorYMayusculas(tareaElement) {
+    if (tareaElement.style.color === 'red') {
+        tareaElement.style.color = 'black';
+        tareaElement.textContent = tareaElement.textContent.toLowerCase();
+    } else {
+        tareaElement.style.color = 'red';
+        tareaElement.textContent = tareaElement.textContent.toUpperCase();
+    }
+}
 </script>

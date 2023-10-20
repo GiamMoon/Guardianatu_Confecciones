@@ -11,7 +11,8 @@ if (!empty($tareas)) {
         return strtotime($a->fecha_creacion) - strtotime($b->fecha_creacion);
     });
 
-    $tareasAgrupadas = Tareas::obtenerTareasAgrupadas($tareas);
+    $tareasAgrupadas = Tareas::obtenerTareasAgrupadas($fecha);
+
 
     ?>
 
@@ -117,7 +118,6 @@ if (!empty($tareas)) {
     }
 
     include_once __DIR__ . "/footer-dashboard.php"; 
-    $script = "<script src='build/js/buscador.js'></script>";
     ?>
 
     <script>

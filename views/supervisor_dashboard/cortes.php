@@ -11,7 +11,8 @@ if (!empty($tareas)) {
         return strtotime($a->fecha_creacion) - strtotime($b->fecha_creacion);
     });
 
-    $tareasAgrupadas = Tareas::obtenerTareasAgrupadas($tareas);
+    $tareasAgrupadas = Tareas::obtenerTareasAgrupadas($fecha);
+
 
     ?>
 
