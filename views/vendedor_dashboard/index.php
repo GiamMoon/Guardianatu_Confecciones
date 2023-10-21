@@ -46,15 +46,15 @@ include_once __DIR__ . "/../templates/alertas.php";
     </div>
     <div class="campo_form">
         <label for="precioTotal">Precio Total</label>
-        <input type="number" id="precioTotal" placeholder="Precio Total" name="precioTotal" value="<?php echo s($cliente->precioTotal); ?>">
+        <input type="text" id="precioTotal" placeholder="Precio Total" name="precioTotal" value="<?php echo s($cliente->precioTotal); ?>">
     </div>
     <div class="campo_form">
         <label for="adelanto">Adelanto</label>
-        <input type="number" id="adelanto" placeholder="Adelanto" name="adelanto" value="<?php echo s($cliente->adelanto); ?>" >
+        <input type="text" id="adelanto" placeholder="Adelanto" name="adelanto" value="<?php echo s($cliente->adelanto); ?>" >
     </div>
     <div class="campo_form">
         <label for="restantePagar">Restante a Pagar</label>
-        <input type="number" id="restantePagar" placeholder="restante a Pagar" name="restantePagar" value="<?php echo s($cliente->restantePagar); ?>">
+        <input type="text" id="restantePagar" placeholder="restante a Pagar" name="restantePagar" value="<?php echo s($cliente->restantePagar); ?>">
     </div>
     <div class="campo_form">
         <label for="imagen">Imagen</label>
